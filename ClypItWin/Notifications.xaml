@@ -5,12 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClypItWin"
         mc:Ignorable="d"
-        Title="Notifications" Height="501" Width="280" WindowStyle="None">
-    <Grid Background="#FF3CBDB1">
+        Title="Notifications" Height="501" Width="280" WindowStyle="None" AllowsTransparency="True">
+    <Grid Background="#FF3CBDB1" HorizontalAlignment="Right" Width="280">
         <Label x:Name="uploadToClypLabel" Content="Notifications" FontFamily="Raleway" FontSize="26" HorizontalContentAlignment="Center" VerticalAlignment="Top" Foreground="White" BorderThickness="0" Background="{x:Null}" Margin="0,7,0,0" Height="41" />
         <Canvas x:Name="notificationsCanvas" HorizontalAlignment="Left" Height="430" Margin="10,53,0,0" VerticalAlignment="Top" Width="252">
-            <Border BorderBrush="White" BorderThickness="2" Height="430" Width="252"/>
+            <Border BorderBrush="White" BorderThickness="2" Height="430" Width="260"/>
+            <Rectangle Fill="White" Height="58" Stroke="White" Width="260"/>
         </Canvas>
+        <Button x:Name="closeButton" Content="X" HorizontalAlignment="Left" Margin="255,0,0,476" Width="25" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" FontFamily="Raleway" FontWeight="Bold" FontSize="23" Padding="0,-2,0,0" Click="closeButton_Click" RenderTransformOrigin="0.44,0.04"/>
+        <Label x:Name="notLoggedInLabel" Content="not logged in...." FontFamily="Raleway" FontSize="26" HorizontalContentAlignment="Center" VerticalAlignment="Top" Foreground="White" BorderThickness="0" Background="{x:Null}" Margin="0,242,0,0" Height="41" Visibility="Hidden"/>
 
     </Grid>
 </Window>

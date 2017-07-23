@@ -15,6 +15,8 @@
         </Canvas>
         <Label x:Name="username" Content="Not logged in...." VerticalAlignment="Top" FontFamily="Raleway" RenderTransformOrigin="0.356,0.535" Foreground="White" Margin="0,480,59,-3"/>
         <Button x:Name="settingsButton" Content="settings" Margin="226,483,0,0" FontFamily="Raleway" HorizontalContentAlignment="Center" VerticalAlignment="Top" Foreground="White" BorderThickness="0" Background="{x:Null}" FontSize="14" Cursor="Hand" Click="settingsButton_Click" Padding="0,-1,0,0" Height="18" BorderBrush="{x:Null}" />
-        <Image x:Name="notificationBell" Height="26" Margin="0,3,251,0" VerticalAlignment="Top" Source="notification_none.png" Cursor="Hand" MouseDown="notificationBell_MouseDown"/>
+        <Image x:Name="notificationBell" IsEnabled="False" Height="26" Margin="3,3,251,0" VerticalAlignment="Top" Source="assets/notification_none.png" Cursor="Hand" MouseDown="notificationBell_MouseDown" HorizontalAlignment="Center"/>
+        <Ellipse x:Name="notificationsCircle" Fill="#FF3CBDB1"  HorizontalAlignment="Left" Height="26" Margin="35,3,0,0" Stroke="White" VerticalAlignment="Top" Width="26" Visibility="Hidden"/>
+        <Label x:Name="numberOfNotifications" Content="0" HorizontalAlignment="Left" Margin="35,3,0,0" VerticalAlignment="Top" Width="26" FontFamily="Raleway" Height="26" FontSize="20" BorderThickness="0,0,0,0" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,0,0,2" Visibility="Hidden"/>
     </Grid>
 </Window>

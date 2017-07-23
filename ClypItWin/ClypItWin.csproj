@@ -161,8 +161,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="notification_none.png" />
-    <Resource Include="notification_unread.png" />
+    <Resource Include="assets\notification_none.png" />
+    <Resource Include="assets\notification_unread.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
