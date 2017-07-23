@@ -5,8 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClypItWin"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="215.23">
+        Title="MainWindow" Height="500.757" Width="280.23" AllowsTransparency="True" WindowStyle="None">
     <Grid Background="#FF3CBDB1">
-        
+        <Label x:Name="uploadToClypLabel" Content="Upload to Clyp" Margin="32,29,32,0" FontFamily="Raleway" FontSize="26" HorizontalContentAlignment="Center" VerticalAlignment="Top" Foreground="White" BorderThickness="0" Background="{x:Null}" />
+        <Canvas x:Name="dragAndDropZone" HorizontalAlignment="Left" Height="225" Margin="32,93,0,0" VerticalAlignment="Top" Width="216">
+            <Border BorderBrush="White" BorderThickness="2" Height="225" Width="216">
+                <Button x:Name="closeButton" Content="X" HorizontalAlignment="Left" Margin="221,-95,-34,291" Width="25" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" FontFamily="Raleway" FontWeight="Bold" FontSize="23" Padding="0,-2,0,0" Height="25" VerticalAlignment="Bottom" Click="closeButton_Click"/>
+            </Border>
+        </Canvas>
+        <Label x:Name="username" Content="Not logged in...." VerticalAlignment="Top" FontFamily="Raleway" RenderTransformOrigin="0.356,0.535" Foreground="White" Margin="0,480,59,-3"/>
+        <Button x:Name="settingsButton" Content="settings" Margin="226,483,0,0" FontFamily="Raleway" HorizontalContentAlignment="Center" VerticalAlignment="Top" Foreground="White" BorderThickness="0" Background="{x:Null}" FontSize="14" Cursor="Hand" Click="settingsButton_Click" Padding="0,-1,0,0" Height="18" BorderBrush="{x:Null}" />
+        <Image x:Name="notificationBell" Height="26" Margin="0,3,251,0" VerticalAlignment="Top" Source="notification_none.png" Cursor="Hand" MouseDown="notificationBell_MouseDown"/>
     </Grid>
 </Window>
