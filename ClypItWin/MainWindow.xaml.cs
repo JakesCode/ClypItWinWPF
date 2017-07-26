@@ -17,6 +17,8 @@ using Newtonsoft.Json;
 using RestSharp;
 using System.Threading;
 using System.Net;
+using System.Windows.Controls.Primitives;
+using System.Net.Http;
 
 namespace ClypItWin
 {
@@ -32,24 +34,52 @@ namespace ClypItWin
             InitializeComponent();
         }
 
-        public static string ClypQuery(string Url, Method HttpMethod, Dictionary<string, string> Headers, Dictionary<string, string> Parameters, Dictionary<string, string> URLParameters)
+        public static string ClypQuery(string Url, HttpMethod Method, Dictionary<string, string> Headers, Dictionary<string, string> Parameters, ClypSession Clyp)
         {
-            var client = new RestClient(Url);
-            var request = new RestRequest(HttpMethod);
-            foreach (var header in Headers)
+            using (var client = new HttpClient())
             {
-                request.AddHeader(header.Key, header.Value);
+                var request = new HttpRequestMessage();
+                request.RequestUri = new Uri(Url);
+                request.Method = Method;
+
+                request.Content = new FormUrlEncodedContent(Parameters);
+
+                foreach (var header in Headers)
+                {
+                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                }
+
+                var response = new HttpResponseMessage();
+
+                if(Method == HttpMethod.Get)
+                {
+                    foreach (var header in Headers)
+                    {
+                        client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
+                        return client.GetAsync(Url).Result.Content.ReadAsStringAsync().Result;
+                    }
+                } else
+                {
+                    var task = client.SendAsync(request)
+                    .ContinueWith((taskWithMessage) =>
+                    {
+                        response = taskWithMessage.Result;
+                    });
+                    task.Wait();
+                }
+
+                if (response == new HttpResponseMessage())
+                {
+                    return "Failed";
+                } else
+                {
+                    return response.Content.ReadAsStringAsync().Result;
+                }         
             }
-            foreach (var parameter in Parameters)
-            {
-                request.AddParameter(parameter.Key, parameter.Value);
-            }
-            foreach (var urlParameter in URLParameters)
-            {
-                request.AddUrlSegment(urlParameter.Key, urlParameter.Value);
-            }
-            IRestResponse response = client.Execute(request);
-            return response.Content;
+        }
+
+        private void client_handleRequest(object sender, UploadStringCompletedEventArgs e)
+        {
 
         }
 
@@ -77,18 +107,18 @@ namespace ClypItWin
             if(Clyp.login_attempt)
             {
                 Clyp = JsonConvert.DeserializeObject<ClypSession>(ClypQuery("https://api.clyp.it/oauth2/token",
-                Method.POST,
-                new Dictionary<string, string>()
-                { { "Authorization", "Basic MjkzMTE5Og==" }, { "Content-Type", "application/x-www-form-urlencoded" } },
-                new Dictionary<string, string>()
-                { { "grant_type", "password" }, { "username", settingsWindow.usernameTextbox.Text }, { "password", settingsWindow.passwordTextbox.Password.ToString() } },
-                new Dictionary<string, string>()));
+                    HttpMethod.Post,
+                    new Dictionary<string, string>()
+                    { { "Authorization", "Basic MjkzMTE5Og==" }, { "Content-Type", "application/x-www-form-urlencoded" } },
+                    new Dictionary<string, string>()
+                    { { "grant_type", "password" }, { "username", settingsWindow.usernameTextbox.Text }, { "password", settingsWindow.passwordTextbox.Password.ToString() } },
+                    this.Clyp));
                 Clyp.user = JsonConvert.DeserializeObject<ClypUser>(ClypQuery("https://api.clyp.it/me",
-                    Method.GET,
+                    HttpMethod.Get,
                     new Dictionary<string, string>()
                     { { "authorization", "Bearer " + Clyp.access_token }, { "Content-Type", "application/x-www-form-urlencoded" }, { "x-client-type", "WebAlfa" } },
                     new Dictionary<string, string>(),
-                    new Dictionary<string, string>()));
+                    this.Clyp));
                 username.Content = "Logged in as: " + Clyp.user.FirstName;
 
                 if(Clyp.user.NotificationsSummary.Count > 0)
@@ -144,6 +174,17 @@ namespace ClypItWin
             {
                 public int Count = 0;
             }
+        }
+
+        private void dragAndDropGrid_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            string[] FileList = (string[])e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop, false);
+            e.Handled = true;
+            var files = FileList.ToList();
+            Uploading uploadingWindow = new Uploading(this.Clyp, files[0]);
+            uploadingWindow.Top = this.Top;
+            uploadingWindow.Left = this.Left;
+            uploadingWindow.Show();
         }
     }
 }

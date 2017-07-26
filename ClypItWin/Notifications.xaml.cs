@@ -16,8 +16,10 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using RestSharp;
 using System.Threading;
-using System.Net;
+using System.Net.Http;
+
 namespace ClypItWin
+
 {
     /// <summary>
     /// Interaction logic for Notifications.xaml
@@ -36,12 +38,12 @@ namespace ClypItWin
                 if(Clyp.user.NotificationsSummary.Count > 0)
                 {
                     ClypNotifications Notifications = JsonConvert.DeserializeObject<ClypNotifications>(MainWindow.ClypQuery("https://api.clyp.it/me/notifications",
-                        Method.GET,
+                        HttpMethod.Get,
                         new Dictionary<string, string>()
                         { { "authorization", "Bearer " + Clyp.access_token }, { "Content-Type", "application/x-www-form-urlencoded" }, { "x-client-type", "WebAlfa" } },
-                        new Dictionary<string, string>(),
                         new Dictionary<string, string>()
-                        { { "count", "5" } }));
+                        { { "count", "5" } },
+                        Clyp));
                     createNotifications(Notifications);
                 }
                 
