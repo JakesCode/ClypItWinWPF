@@ -32,6 +32,9 @@ namespace ClypItWin
         public MainWindow()
         {
             InitializeComponent();
+            var desktopWorkingArea = SystemParameters.WorkArea;
+            this.Left = desktopWorkingArea.Right - this.Width;
+            this.Top = desktopWorkingArea.Bottom - this.Height;
         }
 
         public static string ClypQuery(string Url, HttpMethod Method, Dictionary<string, string> Headers, Dictionary<string, string> Parameters, ClypSession Clyp)
