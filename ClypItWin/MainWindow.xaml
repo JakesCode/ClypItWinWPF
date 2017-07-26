@@ -12,9 +12,8 @@
             <Button x:Name="closeButton" Content="X" HorizontalAlignment="Left" Width="25" Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}" FontFamily="Raleway" FontWeight="Bold" FontSize="23" Padding="0,-2,0,0" Height="25" VerticalAlignment="Bottom" Click="closeButton_Click" Canvas.Left="223" Canvas.Top="-93"/>
 
             <Grid x:Name="dragAndDropGrid" Height="370" Width="240" AllowDrop="True" Drop="dragAndDropGrid_Drop" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Left="-12">
-                <Rectangle Stroke="White" Height="370" StrokeThickness="2" StrokeDashArray="4,4"
-                                                       SnapsToDevicePixels="True"/>
-                <Label x:Name="label" Content="drop a file here" HorizontalAlignment="Center" FontFamily="Raleway" FontSize="20" Width="216" Height="370" VerticalAlignment="Center" HorizontalContentAlignment="Center" Foreground="White" VerticalContentAlignment="Center"/>
+                <Rectangle Stroke="White" Height="370" StrokeThickness="2" StrokeDashArray="4,4" SnapsToDevicePixels="True"/>
+                <Label x:Name="label" Content="drop a file here" HorizontalAlignment="Center" FontFamily="Raleway" FontSize="20" Width="240" Height="370" VerticalAlignment="Center" HorizontalContentAlignment="Center" Foreground="White" VerticalContentAlignment="Center"/>
             </Grid>
         </Canvas>
         <Label x:Name="username" Content="Not logged in...." VerticalAlignment="Top" FontFamily="Raleway" RenderTransformOrigin="0.356,0.535" Foreground="White" Margin="0,480,59,-3"/>

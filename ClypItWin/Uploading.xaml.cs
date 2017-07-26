@@ -24,6 +24,7 @@ namespace ClypItWin
     public partial class Uploading : Window
     {
         public bool authenticated = false;
+        public string postResult = "";
 
         public Uploading(MainWindow.ClypSession Clyp, string FilePath)
         {
@@ -32,16 +33,18 @@ namespace ClypItWin
             {
                 username.Content = "Logged in as: " + Clyp.user.FirstName;
                 authenticated = true;
-                Task.Factory.StartNew(() => { string test = postToClypIt(Clyp, FilePath); });
+                Task.Factory.StartNew(() => { string test = postToClypIt(Clyp, FilePath, true); });
+                notLoggedIn.Visibility = Visibility.Hidden;
             }
             catch
             {
                 // Not logged in and should upload anonymously //
                 // authenticated stays as false //
+                notLoggedIn.Visibility = Visibility.Visible;
             }
         }
 
-        private string postToClypIt(MainWindow.ClypSession Clyp, string FilePath)
+        private string postToClypIt(MainWindow.ClypSession Clyp, string FilePath, bool auth)
         {
             using (var client = new HttpClient())
             {
@@ -53,7 +56,12 @@ namespace ClypItWin
                 client.DefaultRequestHeaders.TryAddWithoutValidation("postman-token", "f6065275-baf8-91a9-e816-188061ac03a1");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("cache-control", "no-cache");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("authorization", "Bearer " + Clyp.access_token);
+
+                if(auth)
+                {
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("authorization", "Bearer " + Clyp.access_token);
+                }
+
                 client.DefaultRequestHeaders.TryAddWithoutValidation("x-client-type", "WebAlfa");
 
                 form.Add(droppedFile, "file", Path.GetFileName(FilePath));
@@ -70,6 +78,32 @@ namespace ClypItWin
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void privateButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            privateButton.Foreground = new SolidColorBrush(Colors.White);
+            publicButton.Foreground = new SolidColorBrush(Color.FromRgb(199, 199, 199));
+        }
+
+        private void publicButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            publicButton.Foreground = new SolidColorBrush(Colors.White);
+            privateButton.Foreground = new SolidColorBrush(Color.FromRgb(199, 199, 199));
+        }
+
+        private void artworkDropZone_Drop(object sender, DragEventArgs e)
+        {
+            string filepath = ((string[])e.Data.GetData(DataFormats.FileDrop, false))[0];
+            if(filepath.EndsWith(".jpg") || filepath.EndsWith(".png"))
+            {
+                BitmapImage droppedArtwork = new BitmapImage();
+                droppedArtwork.BeginInit();
+                droppedArtwork.UriSource = new Uri(filepath);
+                droppedArtwork.EndInit();
+                artworkDropZone.Source = droppedArtwork;
+                artworkLabel.Visibility = Visibility.Hidden;
+            }  
         }
     }
 }
