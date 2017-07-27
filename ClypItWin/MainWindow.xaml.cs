@@ -81,11 +81,6 @@ namespace ClypItWin
             }
         }
 
-        private void client_handleRequest(object sender, UploadStringCompletedEventArgs e)
-        {
-
-        }
-
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -187,6 +182,13 @@ namespace ClypItWin
             Uploading uploadingWindow = new Uploading(this.Clyp, files[0]);
             uploadingWindow.Top = this.Top;
             uploadingWindow.Left = this.Left;
+            if(System.IO.Path.GetFileName(files[0]).Length > 25)
+            {
+                uploadingWindow.filenameLabel.Content = System.IO.Path.GetFileName(files[0]).Substring(0, 25) + "...";
+            } else
+            {
+                uploadingWindow.filenameLabel.Content = System.IO.Path.GetFileName(files[0]);
+            }
             uploadingWindow.Show();
         }
     }

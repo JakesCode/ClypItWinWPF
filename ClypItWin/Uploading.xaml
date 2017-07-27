@@ -27,5 +27,7 @@
             <Label x:Name="artworkLabel" Content="artwork" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Raleway" FontSize="14.667" Foreground="White" FontWeight="Light"/>
             <Rectangle Stroke="White" StrokeThickness="2" StrokeDashArray="2, 2" SnapsToDevicePixels="True" AllowDrop="True" Drop="artworkDropZone_Drop"/>
         </Grid>
+        <Label x:Name="filenameLabel" Content="filename" Margin="20,96,19.652,374.87" Foreground="White" FontFamily="Raleway" FontSize="17.333" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <ProgressBar x:Name="uploadProgress" HorizontalAlignment="Left" Height="16" Margin="33,126,0,0" VerticalAlignment="Top" Width="215" BorderThickness="0" Background="White" Foreground="#FF2A9C8D"/>
     </Grid>
 </Window>
