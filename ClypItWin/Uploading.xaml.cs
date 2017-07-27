@@ -1,24 +1,16 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Services.WebApi;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Handlers;
-using Newtonsoft.Json;
-using Microsoft.VisualStudio.Services.WebApi;
-     
+
 namespace ClypItWin
 {
     /// <summary>
@@ -50,21 +42,37 @@ namespace ClypItWin
             }
         }
 
-        public class ClypUploadResponse
+        public string patchClypItUpload(MainWindow.ClypSession Clyp, ClypUploadResponse Response)
         {
-            public bool Successful { get; set; }
-            public string PlaylistId { get; set; }
-            public string PlaylistUploadToken { get; set; }
-            public string AudioFileId { get; set; }
-            public string Title { get; set; }
-            public string Description { get; set; }
-            public double Duration { get; set; }
-            public string Url { get; set; }
-            public string Mp3Url { get; set; }
-            public string SecureMp3Url { get; set; }
-            public string OggUrl { get; set; }
-            public string SecureOggUrl { get; set; }
-            public string DateCreated { get; set; }
+            using (var client = new HttpClient())
+            {
+                MultipartFormDataContent content = new MultipartFormDataContent();
+
+                Dictionary<string, string> formData = new Dictionary<string, string>()
+                {
+                    { "title", trackTitle.Text },
+                    { "description", trackDescription.Text }
+                };
+
+                if (publicButton.Foreground == new SolidColorBrush(Colors.White))
+                {
+                    // Must be public //
+                    formData.Add("status", "Public");
+                }
+                else
+                {
+                    // Must be private then //
+                    formData.Add("status", "Private");
+                }
+
+                client.DefaultRequestHeaders.TryAddWithoutValidation("postman-token", "f6065275-baf8-91a9-e816-188061ac03a1");
+                client.DefaultRequestHeaders.TryAddWithoutValidation("cache-control", "no-cache");
+                client.DefaultRequestHeaders.TryAddWithoutValidation("authorization", "Bearer " + Clyp.access_token);
+                client.DefaultRequestHeaders.TryAddWithoutValidation("x-client-type", "WebAlfa");
+                client.DefaultRequestHeaders.TryAddWithoutValidation("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                return client.PatchAsync("https://api.clyp.it/" + Response.AudioFileId, content).Result.Content.ReadAsStringAsync().Result;
+            }
         }
 
         private void artworkDropZone_Drop(object sender, DragEventArgs e)
@@ -98,7 +106,7 @@ namespace ClypItWin
                 client.DefaultRequestHeaders.TryAddWithoutValidation("postman-token", "f6065275-baf8-91a9-e816-188061ac03a1");
                 client.DefaultRequestHeaders.TryAddWithoutValidation("cache-control", "no-cache");
 
-                if(auth)
+                if (auth)
                 {
                     client.DefaultRequestHeaders.TryAddWithoutValidation("authorization", "Bearer " + Clyp.access_token);
                 }
@@ -108,37 +116,6 @@ namespace ClypItWin
                 form.Add(droppedFile, "file", Path.GetFileName(FilePath));
                 var response = client.PostAsync("https://upload.clyp.it/upload", form).Result;
                 return response.Content.ReadAsStringAsync().Result;
-            }
-        }
-
-        public string patchClypItUpload(MainWindow.ClypSession Clyp, ClypUploadResponse Response)
-        {
-            using (var client = new HttpClient())
-            {
-                MultipartFormDataContent content = new MultipartFormDataContent();
-
-                Dictionary<string, string> formData = new Dictionary<string, string>()
-                {
-                    { "title", trackTitle.Text },
-                    { "description", trackDescription.Text }
-                };
-
-                if(publicButton.Foreground == new SolidColorBrush(Colors.White))
-                {
-                    // Must be public //
-                    formData.Add("status", "Public");
-                } else
-                {
-                    // Must be private then //
-                    formData.Add("status", "Private");
-                }
-
-                client.DefaultRequestHeaders.TryAddWithoutValidation("postman-token", "f6065275-baf8-91a9-e816-188061ac03a1");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("cache-control", "no-cache");
-                client.DefaultRequestHeaders.TryAddWithoutValidation("authorization", "Bearer " + Clyp.access_token);
-                client.DefaultRequestHeaders.TryAddWithoutValidation("x-client-type", "WebAlfa");
-
-                return client.PatchAsync("https://api.clyp.it/" + Response.AudioFileId, content).Result.Content.ReadAsStringAsync().Result;
             }
         }
 
@@ -156,13 +133,30 @@ namespace ClypItWin
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
-            Task.Factory.StartNew(() => { postResult = postToClypIt(Clyp, filepath, true); }).Wait();
+            Task.Factory.StartNew(() => { postResult = postToClypIt(Clyp, filepath, false); }).Wait();
             ClypUploadResponse Response = JsonConvert.DeserializeObject<ClypUploadResponse>(postResult);
-            if(Response.Successful)
+            if (Response.Successful)
             {
                 Clipboard.SetText(patchClypItUpload(this.Clyp, Response));
                 System.Windows.Forms.MessageBox.Show("Test");
             }
+        }
+
+        public class ClypUploadResponse
+        {
+            public string AudioFileId { get; set; }
+            public string DateCreated { get; set; }
+            public string Description { get; set; }
+            public double Duration { get; set; }
+            public string Mp3Url { get; set; }
+            public string OggUrl { get; set; }
+            public string PlaylistId { get; set; }
+            public string PlaylistUploadToken { get; set; }
+            public string SecureMp3Url { get; set; }
+            public string SecureOggUrl { get; set; }
+            public bool Successful { get; set; }
+            public string Title { get; set; }
+            public string Url { get; set; }
         }
     }
 }
